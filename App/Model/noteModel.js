@@ -20,6 +20,10 @@ const noteSchema = new schema({
         type: Boolean,
         default: false
     },
+    "isPinned":{
+        type:Boolean,
+        default:false
+    },
     "reminder": {
         type: String
     },

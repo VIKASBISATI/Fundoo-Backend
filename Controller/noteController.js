@@ -231,3 +231,136 @@ exports.labelToNotes = (req, res) => {
             })
     }
 }
+// crud for labels
+exports.createLabel = (req, res) => {
+    req.checkBody('labelName', 'label name  connot be empty').notEmpty();
+    console.log("aaaa", req.decoded.payload)
+    var response = {};
+    var errors = req.validationErrors();
+    if (errors) {
+        response.success = false;
+        response.data = null;
+        response.err = errors
+        res.status(422).send(response);
+    } else {
+        noteService.createLabel(req)
+            .then((data) => {
+                console.log("in create controller", data)
+                response.data = data;
+                response.msg = "created label successfully"
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                res.status(404).send(err);
+            })
+    }
+}
+
+exports.getLabels = (req, res) => {
+    noteService.getLabels(req)
+        .then((data) => {
+            console.log("in get labels controller", data)
+            res.status(200).send(data)
+        })
+        .catch((err) => {
+            res.status(404).send(err);
+        })
+}
+
+exports.deleteLabel = (req, res) => {
+    req.checkBody('labelId', 'label Id  connot be empty').notEmpty();
+    console.log("aaaa", req.decoded.payload)
+    var response = {};
+    var errors = req.validationErrors();
+    if (errors) {
+        response.success = false;
+        response.data = null;
+        response.err = errors
+        res.status(422).send(response);
+    } else {
+        noteService.deleteLabel(req)
+            .then((data) => {
+                console.log("in delete label controller", data)
+                response.data = data;
+                response.msg = "deleted label successfully"
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                res.status(404).send(err);
+            })
+    }
+}
+
+exports.updateLabel = (req, res) => {
+    req.checkBody('labelId', 'label Id  connot be empty').notEmpty();
+    req.checkBody('labelName', 'label name  connot be empty').notEmpty();
+    console.log("aaaa", req.decoded.payload)
+    var response = {};
+    var errors = req.validationErrors();
+    if (errors) {
+        response.success = false;
+        response.data = null;
+        response.err = errors
+        res.status(422).send(response);
+    } else {
+        noteService.updateLabel(req)
+            .then((data) => {
+                console.log("in update label controller", data)
+                response.data = data;
+                response.msg = "updated label successfully"
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                res.status(404).send(err);
+            })
+    }
+}
+
+
+exports.pinNotes = (req, res) => {
+    req.checkBody('noteId', 'note Id  connot be empty').notEmpty();
+    console.log("user id", req.decoded.payload)
+    var response = {};
+    var errors = req.validationErrors();
+    if (errors) {
+        response.success = false;
+        response.data = null;
+        response.err = errors
+        res.status(422).send(response);
+    } else {
+        noteService.pinNotes(req)
+            .then((data) => {
+                console.log("in pin notes controller", data);
+                response.data = data;
+                response.msg = "pinned notes successfully"
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                res.status(404).send(err);
+            })
+    }
+}
+
+exports.unPinNotes = (req, res) => {
+    req.checkBody('noteId', 'note Id  connot be empty').notEmpty();
+    console.log("aaaa", req.decoded.payload)
+    var response = {};
+    var errors = req.validationErrors();
+    if (errors) {
+        response.success = false;
+        response.data = null;
+        response.err = errors
+        res.status(422).send(response);
+    } else {
+        noteService.unPinNotes(req)
+            .then((data) => {
+                console.log("in un pin notes controller", data);
+                response.data = data;
+                response.msg = "un pinned notes successfully"
+                res.status(200).send(response)
+            })
+            .catch((err) => {
+                res.status(404).send(err);
+            })
+    }
+}

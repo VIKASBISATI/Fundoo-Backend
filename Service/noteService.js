@@ -1,4 +1,5 @@
-const noteSchema = require('../App/Model/noteModel')
+const noteSchema = require('../App/Model/noteModel');
+const labelSchema = require('../App/Model/labelModel')
 exports.addNotes = (req) => {
     try {
         console.log(req.body);
@@ -185,6 +186,8 @@ exports.restore = (req) => {
     }
 }
 
+
+
 exports.deleteForever = (req) => {
     try {
         console.log("req in delete forever notes", req.body);
@@ -212,8 +215,8 @@ exports.deleteForever = (req) => {
 exports.labelToNotes = (req) => {
     try {
         console.log("req in label to notes", req.body);
-        console.log("req of user is ",req.decoded.payload);
-        
+        console.log("req of user is ", req.decoded.payload);
+
         return new Promise((resolve, reject) => {
             noteSchema.note.updateOne({ "_id": req.body.noteId }, {
                 $push: {
@@ -227,11 +230,11 @@ exports.labelToNotes = (req) => {
                 if (err) {
                     reject(err)
                 } else {
-                    noteSchema.note.findOne({"_id":req.body.noteId},(err,res)=>{
-                        if(err){
+                    noteSchema.note.findOne({ "_id": req.body.noteId }, (err, res) => {
+                        if (err) {
                             console.log("err");
-                        }else{
-                            console.log("result is",res);
+                        } else {
+                            console.log("result is", res);
                         }
                     })
                     console.log("after succesful response the result is", result);
@@ -243,4 +246,154 @@ exports.labelToNotes = (req) => {
         console.log(e);
     }
 }
+
+//crud for labels
+
+exports.createLabel = (req) => {
+    try {
+        console.log("req in create labels", req.body);
+        return new Promise((resolve, reject) => {
+            var labelData = new labelSchema.label({
+                "userId": req.decoded.payload,
+                "labelName": req.body.labelName
+            })
+            labelData.save((err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+
+exports.getLabels = (req) => {
+    try {
+        console.log("req in get labels", req.decoded.payload);
+        return new Promise((resolve, reject) => {
+            labelSchema.label.find({ "userId": req.decoded.payload }, {}, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+
+exports.deleteLabel = (req) => {
+    try {
+        console.log("req in delete labels", req.decoded.payload);
+        return new Promise((resolve, reject) => {
+            labelSchema.label.find({ "labelId": req.body.labelId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    labelSchema.label.deleteOne({ "_id": req.body.labelId }, (err, data) => {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            console.log("yes enterekd to success", req.body.labelId);
+                            console.log("yes data to success", data);
+                            resolve(data)
+                        }
+                    })
+                }
+            })
+
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+exports.updateLabel = (req) => {
+    try {
+        console.log("req in update labels", req.decoded.payload);
+        return new Promise((resolve, reject) => {
+            labelSchema.label.findOne({ "_id": req.body.labelId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    labelSchema.label.updateOne({ "_id": req.body.labelId },
+                        { "labelName": req.body.labelName }, (err, data) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                console.log("yes enterekd to success", req.body.labelId);
+                                console.log("yes data to success", data);
+                                resolve(data)
+                            }
+                        })
+                }
+            })
+
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+exports.pinNotes = (req) => {
+    try {
+        console.log("req in pin notes ", req.decoded.payload);
+        return new Promise((resolve, reject) => {
+            noteSchema.note.findOne({ "_id": req.body.noteId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    noteSchema.note.updateOne({ "_id": req.body.noteId },
+                        { "isPinned": true }, (err, data) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve(data)
+                            }
+                        })
+                }
+            })  
+
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+exports.unPinNotes = (req) => {
+    try {
+        console.log("req in un pin notes ", req.decoded.payload);
+        return new Promise((resolve, reject) => {
+            noteSchema.note.findOne({ "_id": req.body.noteId }, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    noteSchema.note.updateOne({ "_id": req.body.noteId },
+                        { "isPinned": false }, (err, data) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                resolve(data)
+                            }
+                        })
+                }
+            })
+
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 
